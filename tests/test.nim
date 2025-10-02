@@ -255,6 +255,15 @@ suite "leveldb queryIter":
       iter.next() == empty
       iter.finished
 
+  test "iterator is disposed when it goes out of scope":
+    when defined(gcOrc) or defined(gcArc):
+      block:
+        let iter = db.queryIter()
+        discard iter.next()
+      db.close() # crashes if iterator not disposed
+    else:
+      skip()
+
   test "skip":
     let iter = db.queryIter(skip = 1)
     check:

@@ -446,6 +446,10 @@ proc next*(iter: LevelDbQueryIter): (string, string) =
 proc dispose*(iter: LevelDbQueryIter) =
   iter.dispose(iter[])
 
+proc `=destroy`(iter: var LevelDbQueryIterObj) =
+  if iter.dispose != nil:
+    iter.dispose(iter)
+
 proc closeIter(iter: var LevelDbQueryIterObj, iterPtr: ptr leveldb_iterator_t) =
   iter.finished = true
   leveldb_iter_destroy(iterPtr)
