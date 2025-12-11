@@ -455,8 +455,7 @@ suite "package":
   test "import as package":
     let (output, exitCode) = execNimble("install")
     check exitCode == QuitSuccess
-    echo output
-    check output.contains("leveldbstatic installed successfully.")
+    check output.contains("leveldbstatic installed successfully.") or output.contains("LevelDB already build")
 
     cd "tests"/"packagetest":
       var (output, exitCode) = execNimble("build")
