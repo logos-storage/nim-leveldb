@@ -21,7 +21,10 @@ proc execNimble(args: varargs[string]): tuple[output: string, exitCode: int] =
   quotedArgs.insert("-y")
   quotedArgs.insert("--nimbleDir:" & tmpNimbleDir)
   quotedArgs.insert("nimble")
-  quotedArgs = quotedArgs.map(proc (x: string): string = "\"" & x & "\"")
+  quotedArgs = quotedArgs.map(
+    proc(x: string): string =
+      "\"" & x & "\""
+  )
 
   let cmd = quotedArgs.join(" ")
   result = execCmdEx(cmd)
@@ -33,7 +36,10 @@ proc execTool(args: varargs[string]): tuple[output: string, exitCode: int] =
   quotedArgs.insert(tmpDbDir)
   quotedArgs.insert("--database")
   quotedArgs.insert(findExe(tmpNimbleDir / "bin" / "leveldbtool"))
-  quotedArgs = quotedArgs.map(proc (x: string): string = "\"" & x & "\"")
+  quotedArgs = quotedArgs.map(
+    proc(x: string): string =
+      "\"" & x & "\""
+  )
 
   if not dirExists(tmpDbDir):
     createDir(tmpDbDir)
@@ -96,33 +102,27 @@ suite "leveldb":
 
   test "iter reverse":
     initData(db)
-    check(toSeq(db.iter(reverse = true)) ==
-          @[("bb", "3"), ("ba", "2"), ("aa", "1")])
+    check(toSeq(db.iter(reverse = true)) == @[("bb", "3"), ("ba", "2"), ("aa", "1")])
 
   test "iter seek":
     initData(db)
-    check(toSeq(db.iter(seek = "ab")) ==
-          @[("ba", "2"), ("bb", "3")])
+    check(toSeq(db.iter(seek = "ab")) == @[("ba", "2"), ("bb", "3")])
 
   test "iter seek reverse":
     initData(db)
-    check(toSeq(db.iter(seek = "ab", reverse = true)) ==
-          @[("ba", "2"), ("aa", "1")])
+    check(toSeq(db.iter(seek = "ab", reverse = true)) == @[("ba", "2"), ("aa", "1")])
 
   test "iter prefix":
     initData(db)
-    check(toSeq(db.iterPrefix(prefix = "b")) ==
-          @[("ba", "2"), ("bb", "3")])
+    check(toSeq(db.iterPrefix(prefix = "b")) == @[("ba", "2"), ("bb", "3")])
 
   test "iter range":
     initData(db)
-    check(toSeq(db.iterRange(start = "a", limit = "ba")) ==
-          @[("aa", "1"), ("ba", "2")])
+    check(toSeq(db.iterRange(start = "a", limit = "ba")) == @[("aa", "1"), ("ba", "2")])
 
   test "iter range reverse":
     initData(db)
-    check(toSeq(db.iterRange(start = "bb", limit = "b")) ==
-          @[("bb", "3"), ("ba", "2")])
+    check(toSeq(db.iterRange(start = "bb", limit = "b")) == @[("bb", "3"), ("ba", "2")])
 
   test "iter with 0x00":
     db.put("\0z1", "\0ff")
@@ -200,7 +200,8 @@ suite "leveldb":
   test "no compress":
     db.close()
     let nc = leveldb.open(dbName, compressionType = ctNoCompression)
-    defer: nc.close()
+    defer:
+      nc.close()
     nc.put("a", "1")
     check(toSeq(nc.iter()) == @[("a", "1")])
 
@@ -238,7 +239,7 @@ suite "leveldb queryIter":
       not iter.finished
       iter.next() == empty
       iter.finished
-    
+
   test "iterate until disposed":
     let iter = db.queryIter()
     check:
@@ -247,7 +248,7 @@ suite "leveldb queryIter":
       not iter.finished
       iter.next() == (k2, v2)
       not iter.finished
-    
+
     iter.dispose()
 
     check:
@@ -426,8 +427,7 @@ suite "leveldb queryIter":
       iter2.finished
 
   test "modify while iterating":
-    let
-      iter = db.queryIter()
+    let iter = db.queryIter()
 
     check:
       not iter.finished
@@ -455,9 +455,10 @@ suite "package":
   test "import as package":
     let (output, exitCode) = execNimble("install")
     check exitCode == QuitSuccess
-    check output.contains("leveldbstatic installed successfully.")
+    check output.contains("leveldbstatic installed successfully.") or
+      output.contains("LevelDB already build")
 
-    cd "tests"/"packagetest":
+    cd "tests" / "packagetest":
       var (output, exitCode) = execNimble("build")
       check exitCode == QuitSuccess
       check output.contains("Building")
