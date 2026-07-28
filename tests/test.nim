@@ -267,6 +267,12 @@ suite "leveldb queryIter":
       iter.next() == empty
       iter.finished
 
+  test "skip past the end returns empty without crashing":
+    let iter = db.queryIter(skip = 10) # only 3 entries exist
+    check:
+      iter.next() == empty
+      iter.finished
+
   test "limit":
     let iter = db.queryIter(limit = 2)
     check:

@@ -434,6 +434,8 @@ proc seekToQueryStart(iterPtr: ptr leveldb_iterator_t, prefix: string, skip: int
   else:
     leveldb_iter_seek_to_first(iterPtr)
   for i in 0..<skip:
+    if leveldb_iter_valid(iterPtr) == levelDbFalse:
+      break
     leveldb_iter_next(iterPtr)
 
 proc closeIter(iter: LevelDbQueryIter, iterPtr: ptr leveldb_iterator_t) =
