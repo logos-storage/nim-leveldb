@@ -32,7 +32,16 @@ jobs:
       with:
         nim-version: stable
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Skip the LevelDB build
+    - name: Install mingw and wine
+      run: sudo apt-get update && sudo apt-get install -y g++-mingw-w64-x86-64 wine
+    - name: Skip the LevelDB setup
       run: mkdir -p build && touch build/Makefile
     - name: Cross-compile to Windows
-      run: nim c --os:windows --cpu:amd64 --path:. --compileOnly --nimcache:nimcache/cross tests/test.nim
+      run: >
+        nim c --os:windows --cpu:amd64
+        --gcc.exe:x86_64-w64-mingw32-gcc
+        --gcc.linkerexe:x86_64-w64-mingw32-g++
+        --passL:-static-libgcc --passL:-static-libstdc++
+        leveldbtool.nim
+    - name: Run it
+      run: WINEDEBUG=-all wine leveldbtool.exe --version
