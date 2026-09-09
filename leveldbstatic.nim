@@ -87,8 +87,8 @@ const
   version* = block:
     const configFile = "leveldbstatic.nimble"
     const sourcePath = currentSourcePath()
-    const parentConfig = sourcePath.parentDir.parentDir / configFile
-    const localConfig = sourcePath.parentDir / configFile
+    const parentConfig = sourcePath.parentDir.parentDir.replace('\\', '/') & "/" & configFile
+    const localConfig = sourcePath.parentDir.replace('\\', '/') & "/" & configFile
     var content: string
     if fileExists(parentConfig):
       content = staticRead(parentConfig)
