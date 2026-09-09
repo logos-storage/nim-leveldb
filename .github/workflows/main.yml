@@ -21,3 +21,18 @@ jobs:
       run: nimble install -y
     - name: Test
       run: nimble test -y
+
+  cross-windows:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - uses: jiro4989/setup-nim-action@v2
+      with:
+        nim-version: stable
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Skip the LevelDB build
+      run: mkdir -p build && touch build/Makefile
+    - name: Cross-compile to Windows
+      run: nim c --os:windows --cpu:amd64 --path:. --compileOnly --nimcache:nimcache/cross tests/test.nim
