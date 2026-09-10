@@ -1,9 +1,11 @@
-import os
+import os, strutils
 
 const
-  root = currentSourcePath.parentDir.parentDir
-  envWindows = root/"vendor"/"util"/"env_windows.cc"
-  envPosix = root/"vendor"/"util"/"env_posix.cc"
+  # Use explicit `/` for cross-compilation compatibility with Nix.
+  # This should be safe on Windows as well.
+  root = currentSourcePath.parentDir.parentDir.replace('\\', '/')
+  envWindows = root & "/vendor/util/env_windows.cc"
+  envPosix = root & "/vendor/util/env_posix.cc"
 
   LevelDbCMakeFlags {.strdefine.} =
     when defined(macosx):
@@ -15,11 +17,11 @@ const
 
   LevelDbCMakeCommonFlags = " -DCMAKE_POLICY_VERSION_MINIMUM=3.31"
 
-  LevelDbDir {.strdefine.} = $(root/"vendor")
-  buildDir = $(root/"build")
+  LevelDbDir {.strdefine.} = root & "/vendor"
+  buildDir = root & "/build"
 
 proc buildLevelDb() =
-  if fileExists(buildDir/"Makefile"):
+  if fileExists(buildDir & "/Makefile"):
     echo "LevelDB already build. Delete '" & buildDir & "' to force rebuild."
     return
 
