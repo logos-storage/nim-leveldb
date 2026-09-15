@@ -4,7 +4,7 @@ A self-contained LevelDB wrapper for Nim in a Nim friendly way. Uses git-submodu
 
 Original nim LevelDB wrapper: [HERE](https://github.com/zielmicha/leveldb.nim)
 
-Replacing of system library dependency with self-contained C/CPP interoperability by (Codex.Storage)[https://codex.storage]
+Replacing of system library dependency with self-contained C/CPP interoperability by (Logos Storage)[https://codex.storage]
 
 ## Usage
 
